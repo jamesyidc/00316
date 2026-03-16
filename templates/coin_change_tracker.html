@@ -8041,11 +8041,11 @@ pm2 status                                                # 查看所有进程�
                 console.log('   - typeof date:', typeof date);
                 
                 // 如果指定了日期，则查询特定日期的数据
-                // 🚀 性能优化：启用lite模式，只返回必要字段，不返回27币详细数据
+                // 🔥 修复：使用完整模式(lite=false)以获取散点图所需的changes数据
                 // 🔥 修复：始终传入date参数，确保返回完整日期数据
-                let url = `/api/coin-change-tracker/history?lite=true&date=${currentDate}&_t=${Date.now()}`;
+                let url = `/api/coin-change-tracker/history?lite=false&date=${currentDate}&_t=${Date.now()}`;
                 
-                console.log('🚀 Fetching history data (lite mode) from:', url);
+                console.log('🚀 Fetching history data (FULL mode for scatter plot) from:', url);
                 const fetchStartTime = performance.now();
                 
                 // 添加 no-cache 请求头
