@@ -2108,23 +2108,56 @@ def abc_position_strategies():
 
 @app.route('/abc-position/api/daily-prediction', methods=['GET'])
 def abc_position_daily_prediction():
-    """获取每日预测"""
+    """获取每日预测（从币种变动追踪器的预测文件读取）"""
     try:
-        date = request.args.get('date', datetime.now().strftime('%Y%m%d'))
-        prediction_file = Path(f'/home/user/webapp/abc_position/abc_position_prediction_records_{date}.jsonl')
+        from datetime import datetime, timezone, timedelta
+        
+        # 获取日期参数（默认北京时间今天）
+        date_param = request.args.get('date')
+        if date_param:
+            # 如果提供了日期参数（YYYY-MM-DD格式），转换为YYYYMMDD
+            date_str = date_param.replace('-', '')
+        else:
+            # 使用北京时间的今天
+            beijing_tz = timezone(timedelta(hours=8))
+            beijing_now = datetime.now(beijing_tz)
+            date_str = beijing_now.strftime('%Y%m%d')
+        
+        # 读取币种变动追踪器的预测文件
+        prediction_file = Path(f'/home/user/webapp/data/daily_predictions/prediction_{date_str}.jsonl')
         
         if not prediction_file.exists():
-            return jsonify({'success': True, 'data': []})
+            return jsonify({
+                'success': False,
+                'error': f'预测文件不存在: {date_str}',
+                'prediction': None
+            })
         
-        records = []
+        # 读取最后一条记录（最终预测）
+        prediction = None
         with open(prediction_file, 'r', encoding='utf-8') as f:
             for line in f:
                 if line.strip():
-                    records.append(json.loads(line))
+                    prediction = json.loads(line)
         
-        return jsonify({'success': True, 'data': records})
+        if not prediction:
+            return jsonify({
+                'success': False,
+                'error': '预测文件为空',
+                'prediction': None
+            })
+        
+        return jsonify({
+            'success': True,
+            'prediction': prediction
+        })
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        import traceback
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        })
 
 @app.route('/abc-position/api/save-prediction-record', methods=['POST'])
 def abc_position_save_prediction():
