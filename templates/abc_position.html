@@ -1867,6 +1867,176 @@ def get_position_color(account_id, total_cost):
                         </p>
                     </div>
                     
+                    <!-- 系统更新日志 (2026-03-17) -->
+                    <div class="docs-section" style="border: 2px solid #10b981; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
+                        <h3 style="color: #10b981;">📝 系统更新日志 (2026-03-17)</h3>
+                        
+                        <h4 style="color: #059669; margin-top: 20px;">🔧 数据容错机制 (v3.0.0)</h4>
+                        <p><strong>更新时间</strong>：2026-03-17 12:00</p>
+                        <p><strong>更新内容</strong>：</p>
+                        <ul>
+                            <li><strong>二次确认机制</strong>：当检测到数据从有变成无时，自动进行第二次API请求确认，避免因API临时故障导致误判</li>
+                            <li><strong>容错流程</strong>：
+                                <pre>数据更新检测
+  ↓
+数据状态判断：有数据 → 无数据？
+  ↓ (是)
+等待5秒后重新请求API
+  ↓
+二次确认：仍然无数据？
+  ↓ (是)
+显示数据丢失警告并记录日志
+  ↓ (否)
+恢复正常数据显示</pre>
+                            </li>
+                            <li><strong>应用场景</strong>：
+                                <ul>
+                                    <li>OKX API临时不可用或超时</li>
+                                    <li>网络抖动导致请求失败</li>
+                                    <li>服务器临时过载返回空数据</li>
+                                    <li>Python脚本异常退出后重启</li>
+                                </ul>
+                            </li>
+                            <li><strong>实现细节</strong>：
+                                <ul>
+                                    <li>前端JavaScript中添加 <code>lastValidState</code> 变量存储上次有效数据</li>
+                                    <li>在 <code>loadState()</code> 函数中添加数据状态检测逻辑</li>
+                                    <li>检测到持仓数量从 > 0 变为 0 时，触发二次确认</li>
+                                    <li>使用 <code>setTimeout()</code> 延迟5秒后重新调用 <code>loadState()</code></li>
+                                    <li>记录详细日志：首次检测、二次确认结果、最终决策</li>
+                                </ul>
+                            </li>
+                            <li><strong>日志示例</strong>：
+                                <pre>⚠️ 检测到数据异常：账户B持仓从8个变为0个，进行二次确认...
+🔄 5秒后重新请求API...
+✅ 二次确认：数据恢复正常，账户B持仓8个
+❌ 二次确认失败：数据仍然为空，可能是真实平仓或API故障</pre>
+                            </li>
+                        </ul>
+                        
+                        <h4 style="color: #059669; margin-top: 20px;">🎨 策略保存功能优化 (v2.9.5)</h4>
+                        <p><strong>更新时间</strong>：2026-03-17 10:30</p>
+                        <p><strong>更新内容</strong>：</p>
+                        <ul>
+                            <li><strong>策略持久化存储</strong>：
+                                <ul>
+                                    <li>策略数据保存到 <code>data/abc_position/strategies/abc_strategy_{account}_{date}.jsonl</code></li>
+                                    <li>每次保存策略时追加一条记录（包含时间戳、账户、方向、策略、模式）</li>
+                                    <li>页面加载时自动读取最新策略并恢复按钮状态</li>
+                                    <li>支持按日期分文件存储，便于历史回溯</li>
+                                </ul>
+                            </li>
+                            <li><strong>做多/做空按钮视觉增强</strong>：
+                                <ul>
+                                    <li>按钮尺寸增大：从 <code>px-3 py-2</code> 升级到 <code>px-6 py-3</code>（宽度和高度增加50%）</li>
+                                    <li>渐变背景效果：
+                                        <ul>
+                                            <li>做多按钮：<code>linear-gradient(135deg, #10b981 0%, #059669 100%)</code>（绿色渐变）</li>
+                                            <li>做空按钮：<code>linear-gradient(135deg, #ef4444 0%, #dc2626 100%)</code>（红色渐变）</li>
+                                        </ul>
+                                    </li>
+                                    <li>边框增强：2px 实线边框，颜色与渐变匹配</li>
+                                    <li>阴影效果：<code>box-shadow: 0 4px 6px rgba(0,0,0,0.1)</code></li>
+                                    <li>Emoji图标：🚀做多 / 📉做空</li>
+                                    <li>悬停效果：阴影加深到 <code>0 6px 10px rgba(0,0,0,0.15)</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>按钮状态管理</strong>：
+                                <ul>
+                                    <li>选中状态：边框加粗到4px，阴影加深</li>
+                                    <li>未选中状态：半透明显示（<code>opacity: 0.6</code>）</li>
+                                    <li>禁用状态：灰色显示且指针变为 <code>not-allowed</code></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <h4 style="color: #059669; margin-top: 20px;">🔄 数据同步修复 (v2.9.4)</h4>
+                        <p><strong>更新时间</strong>：2026-03-17 08:00</p>
+                        <p><strong>更新内容</strong>：</p>
+                        <ul>
+                            <li><strong>行情预测API路径修正</strong>：
+                                <ul>
+                                    <li>原路径：<code>abc_position/abc_position_prediction_records_{date}.jsonl</code></li>
+                                    <li>新路径：<code>data/daily_predictions/prediction_{date}.jsonl</code></li>
+                                    <li>与币种变动追踪器的预测数据完全同步</li>
+                                </ul>
+                            </li>
+                            <li><strong>预测数据实时同步</strong>：
+                                <ul>
+                                    <li>ABC开仓系统直接读取币种变动追踪器生成的预测结果</li>
+                                    <li>确保两个页面显示完全一致的行情预测信号</li>
+                                    <li>预测信号包括：诱多不参与、诱空不参与、多头、空头、震荡等</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <h4 style="color: #059669; margin-top: 20px;">🐛 颜色判断逻辑修复 (v2.9.0)</h4>
+                        <p><strong>更新时间</strong>：2026-03-17 04:00</p>
+                        <p><strong>更新内容</strong>：</p>
+                        <ul>
+                            <li><strong>修复POIT账户颜色显示错误</strong>：
+                                <ul>
+                                    <li>原逻辑：使用 <code><=</code> 判断，导致24.38 USDT成本被错误判定为绿色（因为24.38 <= A阈值25）</li>
+                                    <li>新逻辑：使用 <code><</code> 判断，24.38 USDT < 25 USDT，正确显示为none（无颜色）</li>
+                                </ul>
+                            </li>
+                            <li><strong>修复颜色顺序问题</strong>：
+                                <ul>
+                                    <li>原顺序：green → orange → red（跳过yellow）</li>
+                                    <li>新顺序：none → green → yellow → red → orange（符合预期）</li>
+                                </ul>
+                            </li>
+                            <li><strong>配置文件路径修正</strong>：
+                                <ul>
+                                    <li>原路径：<code>data/abc_position/abc_position_settings.json</code></li>
+                                    <li>新路径：<code>abc_position/abc_position_settings.json</code></li>
+                                    <li>collector脚本现在正确读取各账户的独立阈值配置</li>
+                                </ul>
+                            </li>
+                            <li><strong>阈值独立配置验证</strong>：
+                                <ul>
+                                    <li>主账户（A）：A档35 USDT, B档70 USDT, C档85 USDT</li>
+                                    <li>POIT账户（B）：A档25 USDT, B档50 USDT, C档65 USDT</li>
+                                    <li>其他账户：使用各自配置的阈值</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <h4 style="color: #059669; margin-top: 20px;">📊 数据格式标准化 (v2.8.0)</h4>
+                        <p><strong>更新时间</strong>：2026-03-17 02:00</p>
+                        <p><strong>更新内容</strong>：</p>
+                        <ul>
+                            <li><strong>JSONL数据结构更新</strong>：
+                                <ul>
+                                    <li>从扁平结构改为嵌套结构：<code>{"accounts": {"A": {...}, "B": {...}}}</code></li>
+                                    <li>每个账户包含完整字段：account_name, pnl_pct, color, positions, unrealized_pnl, total_cost, position_count</li>
+                                    <li>时间戳使用ISO 8601格式（包含时区）：<code>2026-03-17T04:32:43.506546+08:00</code></li>
+                                </ul>
+                            </li>
+                            <li><strong>数据验证增强</strong>：
+                                <ul>
+                                    <li>前端解析时检测数据结构（扁平/嵌套）并自动适配</li>
+                                    <li>兼容旧格式数据，向后兼容性</li>
+                                    <li>数据异常时显示详细错误信息而非空白页面</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        
+                        <h4 style="color: #059669; margin-top: 20px;">🎯 已知问题与待修复</h4>
+                        <ul>
+                            <li><strong>数据容错待实现</strong>：<del>当持仓数据突然消失时缺少二次确认机制</del> ✅ 已修复（v3.0.0）</li>
+                            <li><strong>策略保存待实现</strong>：<del>策略选择未持久化，刷新页面后丢失</del> ✅ 已修复（v2.9.5）</li>
+                            <li><strong>按钮视觉待优化</strong>：<del>做多/做空按钮不够醒目</del> ✅ 已修复（v2.9.5）</li>
+                        </ul>
+                        
+                        <h4 style="color: #059669; margin-top: 20px;">📅 更新计划</h4>
+                        <ul>
+                            <li><strong>v3.1.0</strong>（计划中）：添加Telegram通知推送（颜色变化、阈值超限）</li>
+                            <li><strong>v3.2.0</strong>（计划中）：实现自动止损/止盈逻辑（基于盈亏百分比）</li>
+                            <li><strong>v3.3.0</strong>（计划中）：多账户协同分析（账户间相关性分析）</li>
+                        </ul>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -2261,6 +2431,8 @@ def get_position_color(account_id, total_cost):
         // 当前状态
         let currentState = null;
         let historyData = [];
+        let lastValidState = null;  // 存储上次有效的数据状态
+        let isRetryingValidation = false;  // 防止重复验证
         
         // 账户映射（全局变量，供所有函数使用）
         const accountNames = {
@@ -2391,7 +2563,58 @@ def get_position_color(account_id, total_cost):
                 console.log('📦 API返回数据:', data);
                 
                 if (data.success) {
+                    // 数据异常检测：检测数据从有到无的情况
+                    if (lastValidState && !isRetryingValidation) {
+                        const hasDataLoss = detectDataLoss(lastValidState, data.state);
+                        
+                        if (hasDataLoss) {
+                            console.warn('⚠️ 检测到数据异常，进行二次确认...', hasDataLoss);
+                            isRetryingValidation = true;
+                            
+                            // 显示警告提示
+                            showDataWarning('检测到数据异常，正在二次确认...');
+                            
+                            // 5秒后重新请求API进行二次确认
+                            setTimeout(async () => {
+                                console.log('🔄 5秒后重新请求API进行二次确认...');
+                                try {
+                                    const retryResponse = await fetch('/abc-position/api/current-state');
+                                    const retryData = await retryResponse.json();
+                                    
+                                    if (retryData.success) {
+                                        const stillHasDataLoss = detectDataLoss(lastValidState, retryData.state);
+                                        
+                                        if (stillHasDataLoss) {
+                                            console.error('❌ 二次确认失败：数据仍然为空', stillHasDataLoss);
+                                            showDataWarning('数据仍然为空，可能是真实平仓或API故障');
+                                            // 更新到新状态（即使为空）
+                                            currentState = retryData.state;
+                                            lastValidState = retryData.state;
+                                            updateUI();
+                                        } else {
+                                            console.log('✅ 二次确认：数据恢复正常');
+                                            showDataSuccess('数据已恢复正常');
+                                            currentState = retryData.state;
+                                            lastValidState = retryData.state;
+                                            updateUI();
+                                        }
+                                    }
+                                } catch (retryError) {
+                                    console.error('❌ 二次确认请求失败:', retryError);
+                                    showDataWarning('二次确认请求失败，请稍后刷新');
+                                } finally {
+                                    isRetryingValidation = false;
+                                }
+                            }, 5000);
+                            
+                            // 暂时保留上次有效数据，不更新UI
+                            return;
+                        }
+                    }
+                    
+                    // 正常情况：更新数据
                     currentState = data.state;
+                    lastValidState = data.state;  // 保存为最后有效状态
                     console.log('✅ currentState已设置:', currentState);
                     updateUI();
                     console.log('✅ updateUI()已调用');
@@ -2404,6 +2627,104 @@ def get_position_color(account_id, total_cost):
             } catch (error) {
                 console.error('加载状态失败:', error);
             }
+        }
+        
+        // 检测数据丢失：比较两个状态，检测持仓数量是否从有变为无
+        function detectDataLoss(oldState, newState) {
+            if (!oldState || !newState || !oldState.accounts || !newState.accounts) {
+                return null;
+            }
+            
+            const dataLossInfo = {};
+            
+            for (const accountKey in oldState.accounts) {
+                const oldAccount = oldState.accounts[accountKey];
+                const newAccount = newState.accounts[accountKey];
+                
+                if (!newAccount) continue;
+                
+                // 检测持仓数量从 > 0 变为 0
+                if (oldAccount.position_count > 0 && newAccount.position_count === 0) {
+                    dataLossInfo[accountKey] = {
+                        account_name: oldAccount.account_name,
+                        old_count: oldAccount.position_count,
+                        new_count: newAccount.position_count,
+                        old_cost: oldAccount.total_cost,
+                        new_cost: newAccount.total_cost
+                    };
+                }
+                
+                // 检测成本从 > 0 变为 0
+                if (oldAccount.total_cost > 0 && newAccount.total_cost === 0) {
+                    if (!dataLossInfo[accountKey]) {
+                        dataLossInfo[accountKey] = {
+                            account_name: oldAccount.account_name,
+                            old_count: oldAccount.position_count,
+                            new_count: newAccount.position_count,
+                            old_cost: oldAccount.total_cost,
+                            new_cost: newAccount.total_cost
+                        };
+                    }
+                }
+            }
+            
+            return Object.keys(dataLossInfo).length > 0 ? dataLossInfo : null;
+        }
+        
+        // 显示数据警告提示
+        function showDataWarning(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 10000;
+                animation: slideInRight 0.5s ease-out;
+                max-width: 400px;
+            `;
+            notification.innerHTML = `⚠️ ${message}`;
+            document.body.appendChild(notification);
+            
+            // 10秒后移除提示
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease-in';
+                setTimeout(() => notification.remove(), 500);
+            }, 10000);
+        }
+        
+        // 显示数据恢复成功提示
+        function showDataSuccess(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                font-size: 16px;
+                font-weight: bold;
+                z-index: 10000;
+                animation: slideInRight 0.5s ease-out;
+                max-width: 400px;
+            `;
+            notification.innerHTML = `✅ ${message}`;
+            document.body.appendChild(notification);
+            
+            // 5秒后移除提示
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease-in';
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
         }
         
         // 加载历史数据
