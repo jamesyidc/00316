@@ -1,0 +1,17 @@
+,
+{
+  "name": "backup-scheduler",
+  "script": "/home/user/webapp/backup_scheduler.py",
+  "cwd": "/home/user/webapp",
+  "interpreter": "python3",
+  "instances": 1,
+  "autorestart": true,
+  "watch": false,
+  "max_memory_restart": "200M",
+  "env": {
+    "PYTHONUNBUFFERED": "1"
+  },
+  "error_file": "/home/user/webapp/logs/backup-scheduler-error.log",
+  "out_file": "/home/user/webapp/logs/backup-scheduler-out.log",
+  "log_date_format": "YYYY-MM-DD HH:mm:ss"
+}

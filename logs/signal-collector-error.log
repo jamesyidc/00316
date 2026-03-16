@@ -1,0 +1,7 @@
+2026-03-15 17:10:09: Traceback (most recent call last):
+2026-03-15 17:10:09:   File "/home/user/webapp/source_code/signal_collector.py", line 34, in <module>
+2026-03-15 17:10:09:     collect_signals()
+2026-03-15 17:10:09:   File "/home/user/webapp/source_code/signal_collector.py", line 27, in collect_signals
+2026-03-15 17:10:09:     time.sleep(60)  # 每60秒采集一次
+2026-03-15 17:10:09:     ^^^^^^^^^^^^^^
+2026-03-15 17:10:09: KeyboardInterrupt

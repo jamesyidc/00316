@@ -1,0 +1,6 @@
+2026-03-15 17:10:09: Traceback (most recent call last):
+2026-03-15 17:10:09:   File "/home/user/webapp/source_code/data_health_monitor.py", line 26, in <module>
+2026-03-15 17:10:09:     monitor_data_health()
+2026-03-15 17:10:09:   File "/home/user/webapp/source_code/data_health_monitor.py", line 19, in monitor_data_health
+2026-03-15 17:10:09:     time.sleep(60)
+2026-03-15 17:10:09: KeyboardInterrupt
