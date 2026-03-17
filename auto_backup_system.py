@@ -158,8 +158,16 @@ def create_backup():
             text=True
         )
         
-        if result.returncode != 0:
-            raise Exception(f"tar命令失败: {result.stderr}")
+        # tar退出码说明：
+        # 0 = 成功
+        # 1 = 文件在备份过程中被修改（警告，但备份已完成）
+        # 2+ = 严重错误
+        if result.returncode >= 2:
+            raise Exception(f"tar命令失败 (退出码 {result.returncode}): {result.stderr}")
+        elif result.returncode == 1:
+            print(f"⚠️ 警告: 某些文件在备份过程中被修改，但备份已完成")
+            if result.stderr:
+                print(f"⚠️ 错误输出:\n{result.stderr}")
         
         print(f"✅ tar压缩完成")
         
