@@ -20,7 +20,7 @@ import subprocess
 BACKUP_DIR = Path('/tmp')
 WEBAPP_DIR = Path('/home/user/webapp')
 BACKUP_LOG_FILE = WEBAPP_DIR / 'data' / 'backup_history.jsonl'
-MAX_BACKUPS = 3  # 保留最近3次备份
+MAX_BACKUPS = 999999  # 永久保留所有备份，不再自动删除（用户要求保留完整历史数据）
 
 # 备份策略：复制整个webapp目录，包含所有内容
 # 用户要求包含：logs/, node_modules/, backups/, __pycache__/, 所有数据文件
@@ -229,27 +229,18 @@ def create_backup():
         return None
 
 def cleanup_old_backups():
-    """清理旧备份，只保留最近3次"""
-    print(f"\n🧹 清理旧备份...")
+    """清理旧备份 - 已禁用，用户要求保留所有历史数据"""
+    print(f"\n🔒 自动清理已禁用，所有备份将被永久保留")
+    print(f"📊 当前备份文件数量:")
     
-    # 获取所有备份文件
     backup_files = sorted(
         BACKUP_DIR.glob('webapp_backup_*.tar.gz'),
         key=lambda p: p.stat().st_mtime,
         reverse=True
     )
     
-    if len(backup_files) <= MAX_BACKUPS:
-        print(f"✅ 当前备份数量 ({len(backup_files)}) <= {MAX_BACKUPS}，无需清理")
-        return
-    
-    # 删除多余的备份
-    files_to_delete = backup_files[MAX_BACKUPS:]
-    for backup_file in files_to_delete:
-        try:
-            backup_file.unlink()
-            print(f"🗑️ 已删除旧备份: {backup_file.name}")
-        except Exception as e:
+    print(f"   总计: {len(backup_files)} 个备份文件")
+    return
             print(f"⚠️ 删除失败 {backup_file.name}: {e}")
     
     print(f"✅ 清理完成，保留最近 {MAX_BACKUPS} 次备份")
