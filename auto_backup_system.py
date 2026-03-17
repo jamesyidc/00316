@@ -241,9 +241,6 @@ def cleanup_old_backups():
     
     print(f"   总计: {len(backup_files)} 个备份文件")
     return
-            print(f"⚠️ 删除失败 {backup_file.name}: {e}")
-    
-    print(f"✅ 清理完成，保留最近 {MAX_BACKUPS} 次备份")
 
 def list_backups():
     """列出所有备份"""
