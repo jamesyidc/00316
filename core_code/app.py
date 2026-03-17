@@ -1828,13 +1828,13 @@ def abc_position_real_positions():
         from datetime import datetime, timezone
         import requests as req
         
-        # 账户配置
+        # 账户配置（从OKX交易系统同步）
         accounts_config = {
             'main': {
                 'name': '主账户',
-                'api_key': '',  # 需要配置
-                'secret_key': '',
-                'passphrase': ''
+                'api_key': 'b0c18f2d-e014-4ae8-9c3c-cb02161de4db',
+                'secret_key': '92F864C599B2CE2EC5186AD14C8B4110',
+                'passphrase': 'Tencent@123'
             },
             'poit_main': {
                 'name': 'POIT',
@@ -1844,15 +1844,15 @@ def abc_position_real_positions():
             },
             'fangfang12': {
                 'name': 'fangfang12',
-                'api_key': '',  # 需要配置
-                'secret_key': '',
-                'passphrase': ''
+                'api_key': 'e5867a9a-93b7-476f-81ce-093c3aacae0d',
+                'secret_key': '4624EE63A9BF3F84250AC71C9A37F47D',
+                'passphrase': 'Tencent@123'
             },
             'dadanini': {
                 'name': 'dadanini',
-                'api_key': '',  # 需要配置
-                'secret_key': '',
-                'passphrase': ''
+                'api_key': '1463198a-fad0-46ac-9ad8-2a386461782c',
+                'secret_key': '1D112283B7456290056C253C56E9F3A6',
+                'passphrase': 'Tencent@123'
             }
         }
         
