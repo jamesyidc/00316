@@ -6,10 +6,10 @@
         "B": null,
         "C": null
       },
-      "total_cost": 27.162431936983406,
-      "unrealized_pnl": 1.9694488243661195,
-      "pnl_pct": 7.25,
-      "position_count": 7,
+      "total_cost": 0,
+      "unrealized_pnl": 0,
+      "pnl_pct": 0,
+      "position_count": 0,
       "account_name": "主账户",
       "okx_account": "account_main",
       "color": "none"
@@ -20,13 +20,13 @@
         "B": null,
         "C": null
       },
-      "total_cost": 28.754763312323416,
-      "unrealized_pnl": 1.4673040256795713,
-      "pnl_pct": 5.1,
-      "position_count": 10,
+      "total_cost": 0,
+      "unrealized_pnl": 0,
+      "pnl_pct": 0,
+      "position_count": 0,
       "account_name": "POIT",
       "okx_account": "account_poit_main",
-      "color": "green"
+      "color": "none"
     },
     "C": {
       "positions": {
@@ -34,10 +34,10 @@
         "B": null,
         "C": null
       },
-      "total_cost": 16.291262453446127,
-      "unrealized_pnl": 1.441700909090904,
-      "pnl_pct": 8.85,
-      "position_count": 7,
+      "total_cost": 0,
+      "unrealized_pnl": 0,
+      "pnl_pct": 0,
+      "position_count": 0,
       "account_name": "fangfang12",
       "okx_account": "account_fangfang12",
       "color": "none"
@@ -48,10 +48,10 @@
         "B": null,
         "C": null
       },
-      "total_cost": 18.83771430154882,
-      "unrealized_pnl": 1.8261800000000046,
-      "pnl_pct": 9.69,
-      "position_count": 7,
+      "total_cost": 0,
+      "unrealized_pnl": 0,
+      "pnl_pct": 0,
+      "position_count": 0,
       "account_name": "dadanini",
       "okx_account": "account_dadanini",
       "color": "none"
@@ -63,6 +63,6 @@
     "last_update": null
   },
   "current_direction": "none",
-  "last_update": "2026-03-17T23:03:35.902676+08:00",
+  "last_update": "2026-03-18T00:59:36.442913+08:00",
   "trigger_history": []
 }

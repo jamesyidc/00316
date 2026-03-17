@@ -258,3 +258,8 @@
 {"time": "2026-03-17 22:53:28", "timestamp": 1773759208.0, "symbol": "TON", "event_type": "new_high", "price": 1.346, "previous_high": 1.344, "previous_time": "2026-03-17 16:56:59"}
 {"time": "2026-03-17 22:56:53", "timestamp": 1773759413.0, "symbol": "TON", "event_type": "new_high", "price": 1.347, "previous_high": 1.346, "previous_time": "2026-03-17 22:53:28"}
 {"time": "2026-03-17 23:00:18", "timestamp": 1773759618.0, "symbol": "TRX", "event_type": "new_high", "price": 0.30481, "previous_high": 0.30462, "previous_time": "2026-03-17 22:53:28"}
+{"time": "2026-03-17 23:03:44", "timestamp": 1773759824.0, "symbol": "TRX", "event_type": "new_high", "price": 0.30482, "previous_high": 0.30481, "previous_time": "2026-03-17 23:00:18"}
+{"time": "2026-03-17 23:13:59", "timestamp": 1773760439.0, "symbol": "TAO", "event_type": "new_low", "price": 270.7, "previous_low": 271.3, "previous_time": "2026-03-16 14:49:18"}
+{"time": "2026-03-17 23:51:33", "timestamp": 1773762693.0, "symbol": "TON", "event_type": "new_high", "price": 1.348, "previous_high": 1.347, "previous_time": "2026-03-17 22:56:53"}
+{"time": "2026-03-17 23:54:58", "timestamp": 1773762898.0, "symbol": "TON", "event_type": "new_high", "price": 1.349, "previous_high": 1.348, "previous_time": "2026-03-17 23:51:33"}
+{"time": "2026-03-17 23:58:24", "timestamp": 1773763104.0, "symbol": "TON", "event_type": "new_high", "price": 1.351, "previous_high": 1.349, "previous_time": "2026-03-17 23:54:58"}
