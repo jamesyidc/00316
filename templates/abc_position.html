@@ -3254,15 +3254,26 @@ def get_position_color(account_id, total_cost):
                     axisPointer: {
                         type: 'cross'
                     },
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    borderColor: '#667eea',
+                    borderWidth: 2,
+                    textStyle: {
+                        color: '#333',
+                        fontSize: 13
+                    },
+                    padding: [10, 15],
                     formatter: function(params) {
                         if (!params || params.length === 0) return '';
                         
-                        let result = '⏰ ' + params[0].axisValue + '<br/>';
+                        let result = '<div style="font-weight:bold;font-size:14px;margin-bottom:8px;color:#667eea;">⏰ ' + params[0].axisValue + '</div>';
                         
                         // 获取当前时间点的索引
                         const dataIndex = params[0].dataIndex;
                         
-                        // 显示各账户的盈亏
+                        // 从historyData中获取详细数据
+                        const currentData = historyData[dataIndex];
+                        
+                        // 显示各账户的详细信息
                         const accountMap = {'A': '主账户', 'B': 'POIT', 'C': 'fangfang12', 'D': 'dadanini'};
                         const processedAccounts = new Set();
                         
@@ -3272,15 +3283,60 @@ def get_position_color(account_id, total_cost):
                                 processedAccounts.add(param.seriesName);
                                 const value = param.value[1];  // 因为data是[idx, pnl]格式
                                 const color = value > 0 ? '#10b981' : (value < 0 ? '#ef4444' : '#6b7280');
-                                result += `${param.marker} ${param.seriesName}: <span style="color:${color};font-weight:bold;">${value >= 0 ? '+' : ''}${value.toFixed(2)}%</span>`;
+                                
+                                // 获取账户ID
+                                const accId = Object.keys(accountMap).find(id => accountMap[id] === param.seriesName);
+                                
+                                // 账户标题
+                                result += `<div style="margin-top:10px;padding:8px;background:#f9fafb;border-radius:6px;border-left:3px solid ${color};">`;
+                                result += `<div style="font-weight:bold;margin-bottom:4px;">${param.marker} ${param.seriesName}</div>`;
+                                
+                                // 盈亏百分比
+                                result += `<div style="margin-bottom:2px;">💰 盈亏率: <span style="color:${color};font-weight:bold;">${value >= 0 ? '+' : ''}${value.toFixed(2)}%</span></div>`;
+                                
+                                // 如果有详细数据，显示更多信息
+                                if (currentData && currentData.accounts && currentData.accounts[accId]) {
+                                    const accData = currentData.accounts[accId];
+                                    
+                                    // 持仓数量
+                                    if (accData.position_count > 0) {
+                                        result += `<div style="margin-bottom:2px;">📊 持仓数: <span style="font-weight:bold;">${accData.position_count}个</span></div>`;
+                                        
+                                        // 成本
+                                        result += `<div style="margin-bottom:2px;">💵 成本: <span style="font-weight:bold;">${accData.total_cost.toFixed(2)} USDT</span></div>`;
+                                        
+                                        // 未实现盈亏
+                                        const uplColor = accData.unrealized_pnl > 0 ? '#10b981' : (accData.unrealized_pnl < 0 ? '#ef4444' : '#6b7280');
+                                        result += `<div style="margin-bottom:2px;">📈 未实现盈亏: <span style="color:${uplColor};font-weight:bold;">${accData.unrealized_pnl >= 0 ? '+' : ''}${accData.unrealized_pnl.toFixed(2)} USDT</span></div>`;
+                                        
+                                        // 颜色状态
+                                        const colorEmoji = {
+                                            'none': '⚪',
+                                            'green': '🟢',
+                                            'yellow': '🟡',
+                                            'red': '🔴',
+                                            'orange': '🟠'
+                                        };
+                                        const colorName = {
+                                            'none': '无持仓',
+                                            'green': '绿色（仅A仓）',
+                                            'yellow': '黄色（AB仓）',
+                                            'red': '红色（ABC仓）',
+                                            'orange': '橙色（超限）'
+                                        };
+                                        result += `<div style="margin-bottom:2px;">🎨 状态: ${colorEmoji[accData.color]} ${colorName[accData.color]}</div>`;
+                                    } else {
+                                        result += `<div style="color:#9ca3af;font-style:italic;">暂无持仓</div>`;
+                                    }
+                                }
                                 
                                 // 检查该账户在此时间点是否有加仓
-                                const accId = Object.keys(accountMap).find(id => accountMap[id] === param.seriesName);
                                 if (accId && allPositionIncreasePoints[accId] && allPositionIncreasePoints[accId][dataIndex]) {
                                     const point = allPositionIncreasePoints[accId][dataIndex];
-                                    result += ` <span style="color:#8b5cf6;font-weight:bold;">📈 ${point.value}</span>`;
+                                    result += `<div style="margin-top:4px;color:#8b5cf6;font-weight:bold;">📈 加仓信号: ${point.value}</div>`;
                                 }
-                                result += '<br/>';
+                                
+                                result += '</div>';
                             }
                         });
                         
